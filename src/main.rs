@@ -18,11 +18,21 @@ fn main() {
 
 fn handle_connection(stream: &mut TcpStream) {
     let mut buff = [0; 512];
-    stream.read(&mut buff).unwrap();
 
-    println!("Recieved: {:?}", buff);
-
-    let response = "+PONG\r\n";
-    stream.write(response.as_bytes()).unwrap();
-    stream.flush().unwrap();
+    loop {
+        match stream.read(&mut buff) {
+            Ok(size) if size != 0 => {
+                let response = "+PONG\r\n";
+                stream.write(response.as_bytes()).unwrap();
+                stream.flush().unwrap();
+            }
+            Ok(_) | Err(_) => {
+                println!("Connection closed");
+                break;
+            }
+            Err(e) => {
+                println!("Error: {}", e);
+            }
+        }
+    }
 }
