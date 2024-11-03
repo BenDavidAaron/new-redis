@@ -1,37 +1,49 @@
-use std::io::{Read, Write};
-use std::net::{TcpListener, TcpStream};
+use tokio::{
+    io::{AsyncReadExt, AsyncWriteExt},
+    net::{TcpListener, TcpStream},
+};
 
-fn main() {
-    let listener = TcpListener::bind("127.0.0.1:6379").unwrap();
-
-    for stream in listener.incoming() {
-        match stream {
-            Ok(mut stream) => {
-                handle_connection(&mut stream);
+#[tokio::main]
+async fn main() -> std::io::Result<()> {
+    let listener = TcpListener::bind("127.0.0.1:6379").await?;
+    loop {
+        match listener.accept().await {
+            Ok((stream, _)) => {
+                tokio::spawn(handle_connection(stream));
             }
             Err(e) => {
-                println!("Connection failed: {}", e);
+                println!("Error: {}", e);
+                continue;
             }
         }
     }
 }
 
-fn handle_connection(stream: &mut TcpStream) {
+async fn handle_connection(mut stream: TcpStream) {
     let mut buff = [0; 512];
 
     loop {
-        match stream.read(&mut buff) {
+        match stream.read(&mut buff).await {
             Ok(size) if size != 0 => {
                 let response = "+PONG\r\n";
-                stream.write(response.as_bytes()).unwrap();
-                stream.flush().unwrap();
+                if let Err(e) = stream.write_all(response.as_bytes()).await {
+                    eprintln!("Error writing to socket: {}", e);
+                }
             }
             Ok(_) | Err(_) => {
-                println!("Connection closed");
-                break;
+                match stream.peer_addr() {
+                    Ok(addr) => {
+                        println!("{} Connection closed", addr);
+                    }
+                    Err(e) => {
+                        println!("Connection closed: {}", e);
+                    }
+                }
+                return;
             }
             Err(e) => {
                 println!("Error: {}", e);
+                return;
             }
         }
     }
