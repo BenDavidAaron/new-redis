@@ -6,6 +6,7 @@ pub enum RESPError {
     FromUtf8,
     OutOfBounds(usize),
     WrongType,
+    Unknown,
 }
 
 impl fmt::Display for RESPError {
@@ -14,6 +15,7 @@ impl fmt::Display for RESPError {
             RESPError::FromUtf8 => write!(f, "Cannot convert from UTF-8"),
             RESPError::OutOfBounds(index) => write!(f, "Index out of bounds at index {}", index),
             RESPError::WrongType => write!(f, "Wrong Prefix for RESP type"),
+            RESPError::Unknown => write!(f, "Unknown Format for RESP String"),
         }
     }
 }
