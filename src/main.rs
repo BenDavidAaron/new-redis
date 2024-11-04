@@ -1,8 +1,8 @@
+use crate::resp::RESP;
 use tokio::{
     io::{AsyncReadExt, AsyncWriteExt},
     net::{TcpListener, TcpStream},
 };
-
 mod resp;
 mod resp_result;
 
@@ -28,8 +28,8 @@ async fn handle_connection(mut stream: TcpStream) {
     loop {
         match stream.read(&mut buff).await {
             Ok(size) if size != 0 => {
-                let response = "+PONG\r\n";
-                if let Err(e) = stream.write_all(response.as_bytes()).await {
+                let response = RESP::SimpleString(String::from("PONG"));
+                if let Err(e) = stream.write_all(response.to_string().as_bytes()).await {
                     eprintln!("Error writing to socket: {}", e);
                 }
             }
