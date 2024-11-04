@@ -40,6 +40,14 @@ pub fn binary_extract_line_as_string(buffer: &[u8], index: &mut usize) -> RESPRe
     Ok(String::from_utf8(line)?)
 }
 
+pub fn resp_remove_type(value: char, buffer: &[u8], index: &mut usize) -> RESPResult<()> {
+    if buffer[*index] != value as u8 {
+        return Err(RESPError::WrongType);
+    }
+    *index += 1;
+    Ok(())
+}
+
 mod tests {
     use super::*;
 
@@ -146,5 +154,22 @@ mod tests {
             }
             _ => panic!(),
         }
+    }
+
+    #[test]
+    fn test_binary_remove_type() {
+        let buffer = "+OK\r\n".as_bytes();
+        let mut index: usize = 0;
+        let _ = resp_remove_type('+', buffer, &mut index);
+        assert_eq!(index, 1);
+    }
+
+    #[test]
+    fn test_binary_remove_type_error() {
+        let buffer = "*OK\r\n".as_bytes();
+        let mut index: usize = 0;
+        let error = resp_remove_type('+', buffer, &mut index).unwrap_err();
+        assert_eq!(index, 0);
+        assert_eq!(error, RESPError::WrongType);
     }
 }
