@@ -26,13 +26,13 @@ impl fmt::Display for RESPError {
 }
 
 impl From<FromUtf8Error> for RESPError {
-    fn from(value: FromUtf8Error) -> Self {
+    fn from(_err: FromUtf8Error) -> Self {
         Self::FromUtf8
     }
 }
 
 impl From<num::ParseIntError> for RESPError {
-    fn from(value: num::ParseIntError) -> Self {
+    fn from(_err: num::ParseIntError) -> Self {
         Self::ParseInt
     }
 }
