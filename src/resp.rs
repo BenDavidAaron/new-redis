@@ -158,7 +158,7 @@ pub fn bytes_to_resp(buffer: &[u8], index: &mut usize) -> RESPResult<RESP> {
 }
 
 mod tests {
-    use super::*;
+    
 
     #[test]
     fn test_binary_extract_line_empty_buffer() {
