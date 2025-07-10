@@ -1,8 +1,8 @@
-use crate::RESP;
-use crate::storage::{Storage};
+use crate::storage::Storage;
 use crate::storage_result::{StorageError, StorageResult};
-use std::sync::{Arc, Mutex};
+use crate::RESP;
 use std::fmt;
+use std::sync::{Arc, Mutex};
 
 #[derive(Debug, PartialEq)]
 pub enum ServerError {
@@ -55,8 +55,8 @@ mod tests {
     #[test]
     fn test_process_request_echo() {
         let request = RESP::Array(vec![
-            RESP::BulkString(String::from("ECHO")), 
-            RESP::BulkString(String::from("Hello World"))
+            RESP::BulkString(String::from("ECHO")),
+            RESP::BulkString(String::from("Hello World")),
         ]);
         let storage = Arc::new(Mutex::new(Storage::new()));
         let output = process_request(request, storage).unwrap();
