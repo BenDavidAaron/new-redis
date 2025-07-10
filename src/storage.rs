@@ -230,18 +230,19 @@ mod tests {
             .set(String::from("some_key"), String::from("some_value"))
             .unwrap();
         storage.expiry.insert(
-            String::from("some_key"), 
+            String::from("some_key"),
             SystemTime::now() - Duration::from_secs(5),
         );
         storage.expire_keys();
         assert_eq!(storage.store.len(), 0);
     }
-    
+
     #[test]
     fn test_expire_keys_deactivated() {
         let mut storage = Storage::new();
         storage.set_active_expiry(false);
-        storage.set(String::from("some_key"), String::from("some_value"))
+        storage
+            .set(String::from("some_key"), String::from("some_value"))
             .unwrap();
         storage.expiry.insert(
             String::from("some_key"),
