@@ -10,6 +10,7 @@ use tokio::{
 mod resp;
 mod resp_result;
 mod server;
+mod set;
 mod storage;
 mod storage_result;
 
