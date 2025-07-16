@@ -196,7 +196,11 @@ mod tests {
         let mut storage = Storage::new();
         let some_value = StorageData::from(String::from("some_value"));
         let output = storage
-            .set(String::from("some_key"), String::from("some_value"), SetArgs::new())
+            .set(
+                String::from("some_key"),
+                String::from("some_value"),
+                SetArgs::new(),
+            )
             .unwrap();
         assert_eq!(output, String::from("OK"));
         assert_eq!(storage.store.len(), 1);
@@ -255,7 +259,11 @@ mod tests {
     fn test_expire_keys() {
         let mut storage: Storage = Storage::new();
         storage
-            .set(String::from("some_key"), String::from("some_value"), SetArgs::new())
+            .set(
+                String::from("some_key"),
+                String::from("some_value"),
+                SetArgs::new(),
+            )
             .unwrap();
         storage.expiry.insert(
             String::from("some_key"),
@@ -270,7 +278,11 @@ mod tests {
         let mut storage = Storage::new();
         storage.set_active_expiry(false);
         storage
-            .set(String::from("some_key"), String::from("some_value"), SetArgs::new())
+            .set(
+                String::from("some_key"),
+                String::from("some_value"),
+                SetArgs::new(),
+            )
             .unwrap();
         storage.expiry.insert(
             String::from("some_key"),
@@ -278,5 +290,33 @@ mod tests {
         );
         storage.expire_keys();
         assert_eq!(storage.store.len(), 1);
+    }
+
+    #[test]
+    fn test_set_value_with_px() {
+        let mut storage = Storage::new();
+        let mut some_value = StorageData::from(String::from("some_value"));
+        some_value.add_expiry(Duration::from_millis(100));
+
+        let output = storage.set(
+            String::from("some_key"),
+            String::from("some_value"),
+            SetArgs {
+                expiry: Some(KeyExpiry::PX(100)),
+                existence: None,
+                get: false,
+            },
+        )
+        .unwrap();
+
+        assert_eq!(output, String::from("OK"));
+        assert_eq!(storage.store.len(), 1);
+        match storage.store.get(&String::from("some_key")) {
+            Some(value) => {
+                assert_eq!(value, &some_value);
+            }
+            None => panic!("Value not found in storage"),
+        }
+        storage.expiry.get(&String::from("some_key")).unwrap();
     }
 }
