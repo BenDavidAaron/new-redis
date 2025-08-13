@@ -298,16 +298,17 @@ mod tests {
         let mut some_value = StorageData::from(String::from("some_value"));
         some_value.add_expiry(Duration::from_millis(100));
 
-        let output = storage.set(
-            String::from("some_key"),
-            String::from("some_value"),
-            SetArgs {
-                expiry: Some(KeyExpiry::PX(100)),
-                existence: None,
-                get: false,
-            },
-        )
-        .unwrap();
+        let output = storage
+            .set(
+                String::from("some_key"),
+                String::from("some_value"),
+                SetArgs {
+                    expiry: Some(KeyExpiry::PX(100)),
+                    existence: None,
+                    get: false,
+                },
+            )
+            .unwrap();
 
         assert_eq!(output, String::from("OK"));
         assert_eq!(storage.store.len(), 1);
