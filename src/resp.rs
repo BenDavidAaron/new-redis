@@ -40,7 +40,7 @@ fn binary_extract_line(buffer: &[u8], index: &mut usize) -> RESPResult<Vec<u8>> 
         return Err(RESPError::OutOfBounds(*index));
     }
 
-    let mut previous_elem = buffer[*index].clone();
+    let mut previous_elem = buffer[*index];
     let mut seperator_found = false;
     let mut final_index = *index;
 
@@ -51,7 +51,7 @@ fn binary_extract_line(buffer: &[u8], index: &mut usize) -> RESPResult<Vec<u8>> 
             seperator_found = true;
             break;
         }
-        previous_elem = elem.clone();
+        previous_elem = elem;
     }
 
     if !seperator_found {

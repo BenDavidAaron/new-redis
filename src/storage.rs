@@ -59,10 +59,10 @@ impl Storage {
 
     pub fn process_command(&mut self, command: &Vec<String>) -> StorageResult<RESP> {
         match command[0].to_lowercase().as_str() {
-            "ping" => self.command_ping(&command),
-            "echo" => self.command_echo(&command),
-            "get" => self.command_get(&command),
-            "set" => self.command_set(&command),
+            "ping" => self.command_ping(command),
+            "echo" => self.command_echo(command),
+            "get" => self.command_get(command),
+            "set" => self.command_set(command),
             _ => Err(StorageError::CommandNotAvailable(command[0].clone())),
         }
     }
@@ -104,8 +104,8 @@ impl Storage {
                 value: StorageValue::String(v),
                 created_at: _,
                 expiry: _,
-            }) => return Ok(Some(v.clone())),
-            None => return Ok(None),
+            }) => Ok(Some(v.clone())),
+            None => Ok(None),
         }
     }
 

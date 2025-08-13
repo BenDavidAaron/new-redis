@@ -49,7 +49,7 @@ async fn handle_connection(mut stream: TcpStream, storage: Arc<Mutex<Storage>>) 
         match stream.read(&mut buff).await {
             Ok(size) if size != 0 => {
                 let mut index: usize = 0;
-                let request = match bytes_to_resp(&buff[..size].to_vec(), &mut index) {
+                let request = match bytes_to_resp(&buff[..size], &mut index) {
                     Ok(v) => v,
                     Err(e) => {
                         eprintln!("Error: {}", e);

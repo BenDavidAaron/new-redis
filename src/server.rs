@@ -37,8 +37,8 @@ pub fn process_request(request: RESP, storage: Arc<Mutex<Storage>>) -> StorageRe
         Ok(guard) => guard,
         Err(_) => return Err(StorageError::StorageUnavailable),
     };
-    let response = guard.process_command(&command);
-    response
+    
+    guard.process_command(&command)
 }
 
 #[cfg(test)]
